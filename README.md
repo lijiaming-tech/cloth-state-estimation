@@ -29,7 +29,8 @@ UniClothDiff 复现与面向真机部署的布类状态估计。
 | `scripts/zarr_to_state_est_hdf5.py` | 本仓库新增（Zarr → 训练用 HDF5） |
 | `scripts/train_vrfolding_from_scratch.py` | 本仓库新增（状态估计训练主脚本） |
 | `scripts/train_vrfolding_state_est.py` | 本仓库新增（早期 2000 步版本，保留备查） |
-| `scripts/resume_vrfolding.py` | 本仓库新增（续训版本，未实际使用） |
+| `scripts/resume_vrfolding.py` | 续训入口，必须显式指定 `--resume` |
+| `scripts/vrfolding_protocol.py` | 训练与离线评估共用的多种子协议 |
 | `scripts/resume_download.py` | 本仓库新增（带重试的完整数据集下载脚本） |
 | `experiments/` | 本仓库新增（可核实的指标与运行记录） |
 
@@ -76,19 +77,30 @@ conda run --no-capture-output -n clothdiff \
   python -u scripts/train_vrfolding_from_scratch.py
 ```
 
-⚠️ **该脚本内 `REPO` 为硬编码绝对路径** `/home/agilex/ljm/dyf/UniClothDiff`，
-换机器需先修改。脚本内的路径与超参数即产生 `experiments/` 中记录的那次运行，
-为保证可追溯性未作改动。
+源码根目录现在从脚本位置确定，数据默认位于仓库同级的
+`vr_folding_state_est_23frames/`；可通过 `--data-dir` 指定。
+每次运行写入新目录，保留历史权重。原始2026-09-26脚本可从commit `9208740` 查阅。
 
 训练配置来自 `configs/train_state_est.yaml`，运行时覆盖：
-micro-batch 2 × 累积 4（有效批 8）、lr `1e-5`、1000 步线性 warmup + cosine 衰减到 0、
+micro-batch 2 × 累积 4（有效批上限8，末尾批次按实际样本数加权）、lr `1e-5`、1000 步线性 warmup + cosine 衰减到 0、
 共 20000 步（实际中断于约 12700 步）。
+
+默认五种子DDPM50评估，最佳权重保存为 `best_train_multiseed.pt`，以两帧训练的
+平均归一化几何误差选择；这仍是拟合检查，不代表独立验证集最优。
+续训必须显式指定 `--resume /absolute/path/to/latest.pt`，从检查点读取原配置，
+可以用 `--max-updates 1000` 限制本轮预算而保持原学习率调度。
+完整审查、改动和验证边界见 [`docs/training_review_2026-10-01.md`](docs/training_review_2026-10-01.md)。
 
 ## 7. 评估
 
 ```bash
-conda run --no-capture-output -n clothdiff python experiments/eval_5seed.py
+conda run --no-capture-output -n clothdiff python experiments/eval_5seed.py \
+  --run /home/agilex/ljm/dyf/vr_folding_capacity_runs/20260926_173508
 ```
+
+历史run默认评估 `best_train.pt` 和 `latest.pt`；新run请显式指定
+`--checkpoints best_train_multiseed.pt latest.pt`。结果写入run中的独立评估目录，
+不会覆盖 `experiments/` 中的历史CSV。两个相邻留出帧均参与报告，均不参与选权重。
 
 指标定义：
 - `vertex_l2`：预测与真值的逐顶点欧氏距离均值（数据集原始单位）
