@@ -30,6 +30,7 @@ UniClothDiff 复现与面向真机部署的布类状态估计。
 | `scripts/train_vrfolding_from_scratch.py` | 本仓库新增（状态估计训练主脚本） |
 | `scripts/train_vrfolding_state_est.py` | 本仓库新增（早期 2000 步版本，保留备查） |
 | `scripts/resume_vrfolding.py` | 本仓库新增（续训版本，未实际使用） |
+| `scripts/resume_download.py` | 本仓库新增（带重试的完整数据集下载脚本） |
 | `experiments/` | 本仓库新增（可核实的指标与运行记录） |
 
 上游 `origin` 已重命名为 `upstream`，**不向作者仓库推送**。
