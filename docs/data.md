@@ -29,18 +29,45 @@ snapshot_download(
 
 ### 下载完整 folding 数据集
 
-`scripts/resume_download.py` 是一个带指数退避重试的下载脚本，用于拉取完整的
-`data/folding/*`（约 137 GB）。因为分卷 zip 必须下齐才能解压，这个脚本会长时间运行。
+`scripts/resume_download.py` 是带指数退避重试的下载脚本，拉取完整的 `data/folding/*`。
+分卷 zip 必须下齐才能解压，所以这是一次性的大额下载。
 
-**本机状态（2026-10-01 核实）**：该脚本已连续运行约 **4 天 18 小时**，
-下载到约 **37 GB**，且**当前卡在重试循环中**（日志显示 `attempt 1276`，
-反复出现 `SSLZeroReturnError ... huggingface.co`，每次退避 300 秒）。
+**本机状态（2026-10-01 完成）**：
 
-> 该 SSL 错误与本机代理有关：实测环境变量中的
-> `http_proxy` / `https_proxy`（`http://127.0.0.1:7897`）会让经它的 HTTPS 请求全部失败，
-> 而**绕过代理直连**时 `api.github.com` 等可正常访问。
-> 若下载长期无进展，应检查代理是否可用，或为该进程显式指定可用的代理。
-> 注意 HuggingFace 在部分网络环境下**需要**代理，不能简单地去代理解决。
+| 项 | 值 |
+| --- | --- |
+| 路径 | `/home/agilex/ljm/dyf/vr_folding_download/data/folding/` |
+| 文件数 | **269**（`folding_dataset.z01` ~ `z268` + `folding_dataset.zip`） |
+| 总大小 | **137,810,105,347 字节**（128.346 GiB / 137.81 GB） |
+| 校验 | 269 个文件的 sha256 **全部**匹配 HF LFS 官方哈希 |
+| 结构 | 分片编号 z01~z268 **无缺口、无重复** |
+| 耗时 | 14:19:46 → 15:59:39（1 小时 40 分钟），从 76 个已有分片续传 |
+
+**解压尚未执行。** 解压需要全部 269 个文件同时在位：
+
+```bash
+cd /home/agilex/ljm/dyf/vr_folding_download/data/folding
+unzip folding_dataset.zip      # unzip 会自动读取 .z01~.z268
+```
+
+解压后必须先确认内部结构，才能判断能否用于跨 episode 训练。
+
+#### 代理问题（曾导致下载停滞 4 天）
+
+本机同时存在两套代理环境变量，而 **Python 的 requests/urllib 优先采用小写变量**：
+
+| 变量 | 指向 | 状态 |
+| --- | --- | --- |
+| `http_proxy` / `https_proxy` / `all_proxy`（小写） | `127.0.0.1:7897` | **Clash Verge，已失效** |
+| `HTTP_PROXY` / `HTTPS_PROXY`（大写） | `127.0.0.1:7890` | **iKuuu，可用** |
+
+旧版脚本因此实际走的是失效的 7897，连续 4 天只有 `SSLZeroReturnError`。
+修正版脚本在 **import `huggingface_hub` 之前**于进程内显式固定为 7890、清空
+`all_proxy`，并把 `huggingface.co` 排除在 `NO_PROXY` 之外（本网络直连不通）。
+
+> 排查同类问题的捷径：`ss -ltnp | grep <端口>` 看端口属于哪个进程；
+> 再用 `curl --proxy <addr> --noproxy "" -sS -o /dev/null -w '%{http_code}' https://huggingface.co` 实测。
+> 只测 TCP 连通性不够——7897 能建连接但 TLS 会失败。
 
 ## 2. 示例数据的实际内容（已核实）
 

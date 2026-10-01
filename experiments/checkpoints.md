@@ -47,10 +47,18 @@
 | --- | --- | ---: |
 | 训练用 HDF5（23 帧） | `/home/agilex/ljm/dyf/vr_folding_state_est_23frames/` | 9.2 MB |
 | 原始 Zarr 示例（35 帧） | `/home/agilex/ljm/dyf/uniClothDiff/data/data_examples/VR_Folding/` | 35 MB |
-| 完整 VR-Folding（未下载） | HuggingFace `robotflow/vr-folding` | folding 137 GB / flattening 360 GB |
+| **完整 folding 数据集** | `/home/agilex/ljm/dyf/vr_folding_download/data/folding/` | **128.346 GiB（269 个文件）** |
+| flattening 数据集 | 未下载 | 约 360 GB |
 
-数据集可由 `docs/data.md` 中的步骤重新下载和生成，因此**不必备份**，
-但重新下载需要网络。
+**完整 folding 数据集（2026-10-01 下载完成，已全量校验）**：
+
+- 269 个文件，`137,810,105,347` 字节，**sha256 全部匹配 HF LFS 官方哈希**
+- 分片 `folding_dataset.z01`~`z268` 编号无缺口、无重复
+- **尚未解压**；解压后需先确认内部 episode 结构，见 `docs/progress.md` 第 3 节
+
+小数据集（前两行）可由 `docs/data.md` 中的步骤重新下载生成，**不必备份**。
+完整 folding 数据集同样可重新下载，但耗时约 1 小时 40 分钟且依赖可用代理，
+是否单独备份可视磁盘情况决定。
 
 ## 4. 运行记录（已入库，体积小）
 
