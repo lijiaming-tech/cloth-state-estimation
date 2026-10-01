@@ -1,0 +1,69 @@
+{
+  "start_step": 0,
+  "final_step": 20000,
+  "microbatch": 2,
+  "accumulation": 4,
+  "effective_batch": 8,
+  "lr_schedule": "1000-update linear warmup, then cosine to zero",
+  "base_lr": 1e-05,
+  "seed": 123,
+  "model_cfg": {
+    "num_groups": 256,
+    "group_size": 64,
+    "in_channels": 6,
+    "out_channels": 3,
+    "num_layers": 6,
+    "attention_head_dim": 72,
+    "patchified_input": true,
+    "num_in_frames": 2,
+    "num_out_frames": 1,
+    "patch_file": "/home/agilex/ljm/dyf/vr_folding_capacity_runs/20260926_173508/template.pkl"
+  },
+  "diffusion_cfg": {
+    "num_train_timesteps": 1000,
+    "beta_schedule": "scaled_linear",
+    "prediction_type": "epsilon"
+  },
+  "dataset_cfg": {
+    "template_mesh_path": "/home/agilex/ljm/dyf/vr_folding_capacity_runs/20260926_173508/template.pkl",
+    "num_sample_points": 10000,
+    "do_camera_pose_augmentation": false,
+    "do_point_cloud_augmentation": true,
+    "r_range": 1.5,
+    "t_range": 0.0025,
+    "voxel_downsample_size": 0.005,
+    "points_jitter_sigma": 0.0005,
+    "points_drop_ratio": 0.0,
+    "data_dir": "/home/agilex/ljm/dyf/vr_folding_state_est_23frames"
+  },
+  "train_files": [
+    "00068_Tshirt_000000_000045.h5",
+    "00068_Tshirt_000000_000050.h5",
+    "00068_Tshirt_000000_000055.h5",
+    "00068_Tshirt_000000_000060.h5",
+    "00068_Tshirt_000000_000065.h5",
+    "00068_Tshirt_000000_000070.h5",
+    "00068_Tshirt_000000_000075.h5",
+    "00068_Tshirt_000000_000080.h5",
+    "00068_Tshirt_000000_000085.h5",
+    "00068_Tshirt_000000_000090.h5",
+    "00068_Tshirt_000000_000095.h5",
+    "00068_Tshirt_000000_000100.h5",
+    "00068_Tshirt_000000_000105.h5",
+    "00068_Tshirt_000000_000110.h5",
+    "00068_Tshirt_000000_000115.h5",
+    "00068_Tshirt_000000_000120.h5",
+    "00068_Tshirt_000000_000125.h5",
+    "00068_Tshirt_000000_000130.h5",
+    "00068_Tshirt_000000_000135.h5",
+    "00068_Tshirt_000000_000140.h5",
+    "00068_Tshirt_000000_000145.h5"
+  ],
+  "adjacent_same_episode_holdout": [
+    "00068_Tshirt_000000_000150.h5",
+    "00068_Tshirt_000000_000155.h5"
+  ],
+  "no_episode_generalization_claim": true,
+  "patch_sha256": "01267e287fc9d3d87082cfb2cb847df4e3eb71f86d3266331c127f0dc57bfced",
+  "git_commit": "6d965335cb43fbea1982eb5f441582dac3381fb2"
+}

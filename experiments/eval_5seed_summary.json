@@ -1,0 +1,27 @@
+{
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "inference_steps": 50,
+  "checkpoint_train_scores_by_seed": {
+    "best_train.pt": [
+      0.025511285391714215,
+      0.030868680112891508,
+      0.023870748014608312,
+      0.024557084704381775,
+      0.02311402886686948
+    ],
+    "latest.pt": [
+      0.023223485099975356,
+      0.025853527291657498,
+      0.024495540555673254,
+      0.02160445190678493,
+      0.022026343813724737
+    ]
+  },
+  "note": "Adjacent holdout is from the same episode; it is not a generalization test."
+}

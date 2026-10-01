@@ -1,0 +1,63 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# ---- 虚拟环境 ----
+.venv/
+venv/
+env/
+ENV/
+
+# ---- 模型权重（体积大，单独备份，不入库）----
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+
+# ---- 数据集与批量中间产物 ----
+# 注意：不要整体忽略 datasets/ —— uniclothdiff/datasets/ 是源码目录
+*.h5
+*.hdf5
+*.zarr/
+*.npy
+*.npz
+*.ply
+*.las
+
+# ---- 训练运行输出 ----
+# 训练脚本写入 <repo>/../vr_folding_capacity_runs/，一般在仓库外；
+# 若在仓库内运行，仍按下面规则排除
+vr_folding_capacity_runs/
+vr_folding_state_est_*/
+runs/
+outputs/
+checkpoints/
+logs/
+wandb/
+*.log
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---- 凭据（切勿入库）----
+.env
+*.pem
+*.key
+credentials.json
+token.txt
+
+# 注意：
+#   *.pkl 与 *.obj 不在此忽略 —— assets/ 下的模板文件是复现所必需的，
+#   例如 assets/Tshirt.obj 与 assets/vr_tshirt_voronoi_template.pkl
